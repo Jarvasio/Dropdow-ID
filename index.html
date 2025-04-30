@@ -85,8 +85,8 @@
         const opcoesUnicas = new Set();
 
         data.content.forEach(submissao => {
-          const parte1 = submissao.answers["5"]?.answer;
-          const parte2 = submissao.answers["6"]?.answer;
+          const parte1 = submissao.answers["1"]?.answer;
+          const parte2 = submissao.answers["2"]?.answer;
 
           if ((typeof parte1 === "string" && parte1.trim()) || (typeof parte2 === "string" && parte2.trim())) {
             const limpo1 = typeof parte1 === "string" ? parte1.trim() : "";
