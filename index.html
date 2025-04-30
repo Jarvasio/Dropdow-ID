@@ -42,10 +42,9 @@
   <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
   <script>
     let formID = "";
-    const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b"; // ⚠️ Apenas para testes. Em produção usa proxy seguro!
+    const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b";
     const dropdown = document.getElementById("dropdown");
 
-    // Quando o widget estiver pronto
     JFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
       formID = (settings?.id || "").trim();
@@ -60,63 +59,58 @@
       await carregarSubmissoes(formID);
     });
 
-    // Carrega submissões do formulário de origem
     async function carregarSubmissoes(formID) {
-  const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
+      const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
 
-  console.log("A consultar a API Jotform com URL:", url);
+      console.log("A consultar a API Jotform com URL:", url);
 
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-    console.log("Resposta da API:", data);
+        console.log("Resposta da API:", data);
 
-    if (!data || !Array.isArray(data.content)) {
-      throw new Error("Formato inesperado: 'content' não é array.");
-    }
+        if (!data || !Array.isArray(data.content)) {
+          throw new Error("Formato inesperado: 'content' não é array.");
+        }
 
-    const opcoesUnicas = new Set();
-    dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
+        const opcoesUnicas = new Set();
+        dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
 
-    data.content.forEach(submissao => {
-      const campo1 = submissao.answers?.["1"]?.answer;
-      const campo2 = submissao.answers?.["2"]?.answer;
+        data.content.forEach(submissao => {
+          const campo1 = submissao.answers?.["1"]?.answer;
+          const campo2 = submissao.answers?.["2"]?.answer;
 
-      const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
+          const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
 
-      if (texto && !opcoesUnicas.has(texto)) {
-        opcoesUnicas.add(texto);
-        dropdown.appendChild(new Option(texto, texto));
+          if (texto && !opcoesUnicas.has(texto)) {
+            opcoesUnicas.add(texto);
+            dropdown.appendChild(new Option(texto, texto));
+          }
+        });
+
+        if (opcoesUnicas.size === 0) {
+          dropdown.innerHTML = '<option disabled selected>Sem dados disponíveis</option>';
+        }
+
+      } catch (erro) {
+        console.error("Erro ao consultar a API:", erro);
+        dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
+        alert("Erro ao carregar dados do formulário alvo. Verifica o formID e a API Key.");
       }
-    });
-
-    if (opcoesUnicas.size === 0) {
-      dropdown.innerHTML = '<option disabled selected>Sem dados disponíveis</option>';
     }
 
-  } catch (erro) {
-    console.error("Erro ao consultar a API:", erro);
-    dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
-    alert("Erro ao carregar dados do formulário alvo. Verifica o formID e a API Key.");
-  }
-}
+    dropdown.addEventListener("change", () => {
+      const valorSelecionado = dropdown.value;
+      console.log("Selecionado:", valorSelecionado);
 
+      JFCustomWidget.send({
+        valid: true,
+        value: valorSelecionado
+      });
 
-    // Quando o utilizador seleciona uma opção
-  dropdown.addEventListener("change", () => {
-  const valorSelecionado = dropdown.value;
-  console.log("Selecionado:", valorSelecionado);
-
-  JFCustomWidget.send({
-    valid: true,
-    value: valorSelecionado
-  });
-
-  console.log("Valor enviado com sucesso");
-});
-
-
+      console.log("Valor enviado com sucesso");
+    });
   </script>
 </body>
 </html>
