@@ -105,9 +105,16 @@
 
     // Quando o utilizador seleciona uma opção
     dropdown.addEventListener("change", () => {
-      const valorSelecionado = dropdown.value;
-      JFCustomWidget.sendData({ value: valorSelecionado });
-    });
+    const valorSelecionado = dropdown.value;
+    console.log("Selecionado:", valorSelecionado);
+
+    JFCustomWidget.sendData({
+    value: valorSelecionado
+  });
+
+  console.log("Valor enviado para Jotform:", valorSelecionado);
+});
+
   </script>
 </body>
 </html>
