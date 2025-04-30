@@ -42,7 +42,6 @@
   <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
   <script>
     let formID = "";
-    const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b";
     const dropdown = document.getElementById("dropdown");
 
     JFCustomWidget.subscribe("ready", async () => {
@@ -60,34 +59,14 @@
     });
 
     async function carregarSubmissoes(formID) {
-const url = `https://jotformproxy.vercel.app/api/jotform-proxy?formID=${formID}`;
-
+      const url = `https://jotformproxy.vercel.app/api/submissions?formID=${formID}`;
       console.log("A consultar a API Jotform com URL:", url);
 
-     try {
-            const res = await fetch(url);
-            const data = await res.json();
-          
-            console.log("Resposta completa da API:", data);
-          
-            if (!data || !Array.isArray(data.content)) {
-              console.error("Conteúdo da API inválido ou vazio:", data.content);
-              throw new Error("Formato inesperado: 'content' não é array.");
-        }
-       try {
-              const res = await fetch(url);
-              const data = await res.json();
-            
-              console.log("Resposta crua da API:", data);
-              console.log("Tipo de content:", typeof data.content);
-              console.log("É array?", Array.isArray(data.content));
-              console.log("Content:", data.content);
-            
-              if (!data || !Array.isArray(data.content)) {
-                throw new Error("Formato inesperado: 'content' não é array.");
-          }
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-  // ... (continua como antes)
+        console.log("Resposta da API:", data);
 
         const opcoesUnicas = new Set();
         dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
@@ -111,7 +90,7 @@ const url = `https://jotformproxy.vercel.app/api/jotform-proxy?formID=${formID}`
       } catch (erro) {
         console.error("Erro ao consultar a API:", erro);
         dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
-        alert("Erro ao carregar dados do formulário alvo. Verifica o formID e a API Key.");
+        alert("Erro ao carregar dados do formulário alvo. Verifica o formID.");
       }
     }
 
@@ -123,8 +102,6 @@ const url = `https://jotformproxy.vercel.app/api/jotform-proxy?formID=${formID}`
         valid: true,
         value: valorSelecionado
       });
-
-      console.log("Valor enviado com sucesso");
     });
   </script>
 </body>
