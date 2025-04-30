@@ -41,16 +41,15 @@
 
   <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
   <script>
-    let formID = "";
     const dropdown = document.getElementById("dropdown");
 
     JFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
-      formID = (settings?.id || "").trim();
+      const formID = (settings?.id || "").trim();
 
-      if (!formID) {
-        alert("O parâmetro 'id' (formID) não foi fornecido.");
-        console.error("Parâmetro 'id' ausente ou vazio.");
+      if (!formID || formID.length < 10) {
+        alert("O parâmetro 'id' (formID) é inválido ou demasiado curto.");
+        console.error("FormID inválido:", formID);
         return;
       }
 
@@ -59,44 +58,44 @@
     });
 
     async function carregarSubmissoes(formID) {
-  const url = `https://jotformproxy.vercel.app/api/submissions?formID=${formID}`;
-  console.log("A consultar a API Jotform com URL:", url);
+      const url = `https://jotformproxy.vercel.app/api/submissions?formID=${formID}`;
+      console.log("A consultar a API Jotform com URL:", url);
 
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-    console.log("Resposta da API:", data);
+        console.log("Resposta da API:", data);
 
-    if (!data || !Array.isArray(data.content)) {
-      throw new Error("Formato inesperado: 'content' não é array.");
-    }
+        if (!data || !Array.isArray(data.content)) {
+          console.error("Formato inesperado:", data);
+          throw new Error("A propriedade 'content' não é um array.");
+        }
 
-    const opcoesUnicas = new Set();
-    dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
+        const opcoesUnicas = new Set();
+        dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
 
-    data.content.forEach(submissao => {
-      const campo1 = submissao.answers?.["1"]?.answer;
-      const campo2 = submissao.answers?.["2"]?.answer;
+        data.content.forEach(submissao => {
+          const campo1 = submissao.answers?.["1"]?.answer;
+          const campo2 = submissao.answers?.["2"]?.answer;
+          const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
 
-      const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
+          if (texto && !opcoesUnicas.has(texto)) {
+            opcoesUnicas.add(texto);
+            dropdown.appendChild(new Option(texto, texto));
+          }
+        });
 
-      if (texto && !opcoesUnicas.has(texto)) {
-        opcoesUnicas.add(texto);
-        dropdown.appendChild(new Option(texto, texto));
+        if (opcoesUnicas.size === 0) {
+          dropdown.innerHTML = '<option disabled selected>Nenhuma opção disponível</option>';
+        }
+
+      } catch (erro) {
+        console.error("Erro ao consultar a API:", erro);
+        dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
+        alert("Erro ao carregar dados do formulário. Verifica o formID e a ligação.");
       }
-    });
-
-    if (opcoesUnicas.size === 0) {
-      dropdown.innerHTML = '<option disabled selected>Sem dados disponíveis</option>';
     }
-
-  } catch (erro) {
-    console.error("Erro ao consultar a API:", erro);
-    dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
-    alert("Erro ao carregar dados do formulário alvo. Verifica o formID.");
-  }
-}
 
     dropdown.addEventListener("change", () => {
       const valorSelecionado = dropdown.value;
