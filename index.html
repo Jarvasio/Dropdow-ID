@@ -61,7 +61,7 @@
     });
 
     // Carrega submissões do formulário de origem
-    aasync function carregarSubmissoes(formID) {
+    async function carregarSubmissoes(formID) {
   const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
 
   console.log("A consultar a API Jotform com URL:", url);
