@@ -1,0 +1,15 @@
+{
+  "name": "Dropdown Dinâmico",
+  "description": "Dropdown com dados de outro formulário",
+  "icon": "list",
+  "properties": [
+    {
+      "name": "formID",
+      "type": "text",
+      "label": "Formulário de Origem",
+      "default": "",
+      "hint": "251124801004338"
+    }
+  ],
+  "tags": ["dropdown", "formulário", "integração"]
+}
