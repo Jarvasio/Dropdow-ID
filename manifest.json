@@ -4,8 +4,9 @@
   "icon": "list",
   "properties": [
     {
-      "name": "formID",
+      "name": "IDform",
       "label": "Formulário de Origem (formID)",
+      "placeholder": "IDform",
       "type": "text",
       "default": "",
       "hint": "251124801004338"
