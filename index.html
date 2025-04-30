@@ -61,44 +61,47 @@
     });
 
     // Carrega submissões do formulário de origem
-    async function carregarSubmissoes(formID) {
-      const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
+    aasync function carregarSubmissoes(formID) {
+  const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
 
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
+  console.log("A consultar a API Jotform com URL:", url);
 
-        if (!data || !Array.isArray(data.content)) {
-          throw new Error("Formato inesperado da resposta. Verifica o formID e a API Key.");
-        }
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
 
-        const opcoesUnicas = new Set();
-        dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
+    console.log("Resposta da API:", data);
 
-        data.content.forEach(submissao => {
-          const campo1 = submissao.answers?.["1"]?.answer;
-          const campo2 = submissao.answers?.["2"]?.answer;
-
-          if (campo1 || campo2) {
-            const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
-
-            if (texto && !opcoesUnicas.has(texto)) {
-              opcoesUnicas.add(texto);
-              dropdown.appendChild(new Option(texto, texto));
-            }
-          }
-        });
-
-        if (opcoesUnicas.size === 0) {
-          dropdown.innerHTML = '<option disabled selected>Sem dados disponíveis</option>';
-        }
-
-      } catch (erro) {
-        console.error("Erro ao carregar submissões:", erro);
-        dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
-        alert("Erro ao carregar os dados do formulário de origem.");
-      }
+    if (!data || !Array.isArray(data.content)) {
+      throw new Error("Formato inesperado: 'content' não é array.");
     }
+
+    const opcoesUnicas = new Set();
+    dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
+
+    data.content.forEach(submissao => {
+      const campo1 = submissao.answers?.["1"]?.answer;
+      const campo2 = submissao.answers?.["2"]?.answer;
+
+      const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
+
+      if (texto && !opcoesUnicas.has(texto)) {
+        opcoesUnicas.add(texto);
+        dropdown.appendChild(new Option(texto, texto));
+      }
+    });
+
+    if (opcoesUnicas.size === 0) {
+      dropdown.innerHTML = '<option disabled selected>Sem dados disponíveis</option>';
+    }
+
+  } catch (erro) {
+    console.error("Erro ao consultar a API:", erro);
+    dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
+    alert("Erro ao carregar dados do formulário alvo. Verifica o formID e a API Key.");
+  }
+}
+
 
     // Quando o utilizador seleciona uma opção
     dropdown.addEventListener("change", () => {
