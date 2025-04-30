@@ -48,7 +48,7 @@
     
       console.log("Parâmetros recebidos:", settings);  // <--- aqui está correto
     
-      const formID = (settings?.["Formulário de Origem (formID)"] || settings?.id || "").trim();
+      const formID = (settings?.formID || "").trim();
     
       if (!formID || formID.length < 10) {
         alert("O parâmetro 'formID' é inválido ou demasiado curto.");
