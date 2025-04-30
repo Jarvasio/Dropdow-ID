@@ -45,7 +45,9 @@
 
     JFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
-      const formID = (settings?.id || "").trim();
+      console.log("Todos os parâmetros recebidos pelo widget:");
+      console.log(JFCustomWidget.getWidgetSettings());
+      const formID = (settings?.formID || settings?.id || "").trim();
 
       if (!formID || formID.length < 10) {
         alert("O parâmetro 'id' (formID) é inválido ou demasiado curto.");
