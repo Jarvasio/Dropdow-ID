@@ -5,8 +5,8 @@
   "properties": [
     {
       "name": "formID",
+      "label": "Formulário de Origem (formID)",
       "type": "text",
-      "label": "Formulário de Origem",
       "default": "",
       "hint": "251124801004338"
     }
