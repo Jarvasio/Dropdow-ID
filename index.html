@@ -2,40 +2,30 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Dropdown Dinâmico Jotform</title>
+  <title>Dropdown Dinâmico (via formID)</title>
   <style>
     body {
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-      margin: 1.5rem;
-      background-color: #f9f9f9;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
       color: #333;
     }
 
     label {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
       display: block;
-      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
     }
 
-    select#dropdown {
+    select {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.5rem;
       font-size: 1rem;
-      border: 1px solid #d0d5dd;
       border-radius: 8px;
-      background-color: #ffffff;
-      color: #344054;
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="12" height="8" viewBox="0 0 12 8" xmlns="http://www.w3.org/2000/svg"><path d="M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z" fill="%23444"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      background-size: 0.65rem auto;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #ccc;
     }
 
-    select#dropdown:focus {
+    select:focus {
       outline: none;
       border-color: #3966fa;
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
@@ -44,52 +34,54 @@
 </head>
 <body>
 
-  <label for="dropdown">Selecione a Obra:</label>
+  <label for="dropdown">Selecione:</label>
   <select id="dropdown">
-    <option disabled selected>A carregar opções...</option>
+    <option selected disabled>A carregar opções...</option>
   </select>
 
   <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
   <script>
+    let formID = "";
+    const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b"; // ⚠️ Apenas para testes. Em produção usa proxy seguro!
     const dropdown = document.getElementById("dropdown");
 
-    // Espera pelo sinal de que o widget está pronto
-    JFCustomWidget.subscribe("ready", async function () {
+    // Quando o widget estiver pronto
+    JFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
-      const formID = (settings?.id || "").trim();
+      formID = (settings?.id || "").trim();
 
       if (!formID) {
-        alert("Parâmetro 'id' do formulário não foi fornecido.");
-        console.error("Faltou o ID do formulário alvo. Verifique o parâmetro do widget.");
+        alert("O parâmetro 'id' (formID) não foi fornecido.");
+        console.error("Parâmetro 'id' ausente ou vazio.");
         return;
       }
 
-      console.log("Ligação ao formulário alvo:", formID);
-      await carregarOpcoes(formID);
+      console.log("Formulário de origem definido como:", formID);
+      await carregarSubmissoes(formID);
     });
 
-    // Função para ir buscar os dados das submissões
-    async function carregarOpcoes(formID) {
-      const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b"; // Substitui por variável segura se for produção
+    // Carrega submissões do formulário de origem
+    async function carregarSubmissoes(formID) {
+      const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
 
       try {
-        const url = `https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`;
-        const response = await fetch(url);
-        const dados = await response.json();
+        const res = await fetch(url);
+        const data = await res.json();
 
-        if (!dados.content || !Array.isArray(dados.content)) {
-          throw new Error("Resposta inesperada da API Jotform.");
+        if (!data || !Array.isArray(data.content)) {
+          throw new Error("Formato inesperado da resposta. Verifica o formID e a API Key.");
         }
 
-        dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
         const opcoesUnicas = new Set();
+        dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
 
-        dados.content.forEach(submissao => {
-          const parte1 = submissao.answers?.["1"]?.answer;
-          const parte2 = submissao.answers?.["2"]?.answer;
+        data.content.forEach(submissao => {
+          const campo1 = submissao.answers?.["1"]?.answer;
+          const campo2 = submissao.answers?.["2"]?.answer;
 
-          if (parte1 || parte2) {
-            const texto = [parte1, parte2].filter(Boolean).join(" / ").trim();
+          if (campo1 || campo2) {
+            const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
+
             if (texto && !opcoesUnicas.has(texto)) {
               opcoesUnicas.add(texto);
               dropdown.appendChild(new Option(texto, texto));
@@ -102,15 +94,16 @@
         }
 
       } catch (erro) {
-        alert("Erro ao carregar dados do formulário alvo.");
-        console.error("Erro ao chamar a API:", erro);
+        console.error("Erro ao carregar submissões:", erro);
         dropdown.innerHTML = '<option disabled selected>Erro ao carregar dados</option>';
+        alert("Erro ao carregar os dados do formulário de origem.");
       }
     }
 
-    // Enviar seleção para o Jotform
-    dropdown.addEventListener("change", function () {
-      JFCustomWidget.sendData({ value: dropdown.value });
+    // Quando o utilizador seleciona uma opção
+    dropdown.addEventListener("change", () => {
+      const valorSelecionado = dropdown.value;
+      JFCustomWidget.sendData({ value: valorSelecionado });
     });
   </script>
 </body>
