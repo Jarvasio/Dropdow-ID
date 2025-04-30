@@ -45,16 +45,17 @@
 
     JFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
-      console.log("Todos os parâmetros recebidos pelo widget:");
-      console.log(JFCustomWidget.getWidgetSettings());
+    
+      console.log("Parâmetros recebidos:", settings);  // <--- aqui está correto
+    
       const formID = (settings?.formID || settings?.id || "").trim();
-
+    
       if (!formID || formID.length < 10) {
-        alert("O parâmetro 'id' (formID) é inválido ou demasiado curto.");
-        console.error("FormID inválido:", formID);
+        alert("O parâmetro 'formID' é inválido ou demasiado curto.");
+        console.error("FormID inválido recebido:", formID);
         return;
       }
-
+    
       console.log("Formulário de origem definido como:", formID);
       await carregarSubmissoes(formID);
     });
