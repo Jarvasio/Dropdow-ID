@@ -50,7 +50,7 @@
     
       console.log("Parâmetros recebidos:", settings);
     
-      const formID = (settings?.formID || "").trim();
+      const formID = (settings?.IDform || "").trim();
     
       if (!formID || formID.length < 10 || !/^\d+$/.test(formID)) {
         alert("O parâmetro 'formID' está vazio, inválido ou mal configurado.");
