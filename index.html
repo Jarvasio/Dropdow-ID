@@ -43,7 +43,9 @@
   <script>
     const dropdown = document.getElementById("dropdown");
 
-    JJFCustomWidget.subscribe("ready", async () => {
+    // CORRETO
+    JFCustomWidget.subscribe("ready", async () => {
+
       const settings = JFCustomWidget.getWidgetSettings();
     
       console.log("Parâmetros recebidos:", settings);
