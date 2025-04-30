@@ -43,22 +43,23 @@
   <script>
     const dropdown = document.getElementById("dropdown");
 
-    JFCustomWidget.subscribe("ready", async () => {
+    JJFCustomWidget.subscribe("ready", async () => {
       const settings = JFCustomWidget.getWidgetSettings();
     
-      console.log("Parâmetros recebidos:", settings);  // <--- aqui está correto
+      console.log("Parâmetros recebidos:", settings);
     
       const formID = (settings?.formID || "").trim();
     
-      if (!formID || formID.length < 10) {
-        alert("O parâmetro 'formID' é inválido ou demasiado curto.");
-        console.error("FormID inválido recebido:", formID);
+      if (!formID || formID.length < 10 || !/^\d+$/.test(formID)) {
+        alert("O parâmetro 'formID' está vazio, inválido ou mal configurado.");
+        console.error("formID inválido:", formID);
         return;
       }
     
-      console.log("Formulário de origem definido como:", formID);
+      console.log("Ligação ao formulário com ID:", formID);
       await carregarSubmissoes(formID);
     });
+
 
     async function carregarSubmissoes(formID) {
       const url = `https://jotformproxy.vercel.app/api/submissions?formID=${formID}`;
