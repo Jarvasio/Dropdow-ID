@@ -103,15 +103,27 @@
       }
     }
 
-    dropdown.addEventListener("change", () => {
-      const valorSelecionado = dropdown.value;
-      console.log("Selecionado:", valorSelecionado);
+    let valorSelecionado = "";
 
+    dropdown.addEventListener("change", () => {
+      valorSelecionado = dropdown.value;
+      console.log("Selecionado:", valorSelecionado);
+    
       JFCustomWidget.send({
         valid: true,
         value: valorSelecionado
       });
     });
+    
+    // Necessário para submissão correta
+    JFCustomWidget.subscribe("submit", () => {
+      console.log("Submissão enviada com valor:", valorSelecionado);
+    
+      JFCustomWidget.sendSubmit({
+        value: valorSelecionado
+      });
+    });
+
   </script>
 </body>
 </html>
