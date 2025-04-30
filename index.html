@@ -74,7 +74,6 @@
 
     async function carregarOpcoes(formID) {
       const apiKey = "9be9a89e6af80cf2e4a4891b2170dd0b";
-      const formID = widgetID
 
       try {
         const response = await fetch(`https://eu-api.jotform.com/form/${formID}/submissions?apiKey=${apiKey}&limit=1000`);
