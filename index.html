@@ -82,8 +82,8 @@
         dropdown.innerHTML = '<option disabled selected>Escolha uma opção...</option>';
 
         data.content.forEach(submissao => {
-          const campo1 = submissao.answers?.["5"]?.answer;
-          const campo2 = submissao.answers?.["6"]?.answer;
+          const campo1 = submissao.answers?.["1"]?.answer;
+          const campo2 = submissao.answers?.["2"]?.answer;
           const texto = [campo1, campo2].filter(Boolean).join(" / ").trim();
 
           if (texto && !opcoesUnicas.has(texto)) {
