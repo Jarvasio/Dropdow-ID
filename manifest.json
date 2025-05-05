@@ -1,16 +1,17 @@
-{
-  "name": "Dropdown Dinâmico",
-  "description": "Dropdown com dados de outro formulário",
-  "icon": "list",
-  "properties": [
-    {
-      "name": "IDform",
-      "label": "Formulário de Origem (formID)",
-      "placeholder": "IDform",
-      "type": "text",
-      "default": "",
-      "hint": "251124801004338"
-    }
-  ],
-  "tags": ["dropdown", "formulário", "integração"]
-}
+"properties": [
+  {
+    "name": "IDform",
+    "type": "text",
+    "label": "ID do Formulário de Origem"
+  },
+  {
+    "name": "IDquestion1",
+    "type": "text",
+    "label": "ID da Pergunta 1"
+  },
+  {
+    "name": "IDquestion2",
+    "type": "text",
+    "label": "ID da Pergunta 2"
+  }
+]
